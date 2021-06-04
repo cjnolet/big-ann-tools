@@ -1,3 +1,4 @@
+import cupy as cp
 import numpy as np
 
 
@@ -9,8 +10,8 @@ def load_chunk(file_name, chunk, chunk_size, dt):
   n_pts = int.from_bytes(in_file.read(4), byteorder='little', signed=False)
   n_dim = int.from_bytes(in_file.read(4), byteorder='little', signed=False)
 
-  chunk = args.chunk # TODO: Make this an argument to the script
-  chunk_size = args.chunk_size # TODO: Make this an argument to the script
+  chunk = args.chunk
+  chunk_size = args.chunk_size
   start_bytes = 8
 
   entry_bytes_start = (n_dim * dt.itemsize * chunk_size * chunk) + start_bytes
@@ -21,7 +22,7 @@ def load_chunk(file_name, chunk, chunk_size, dt):
 
   b = in_file.read(chunk_size * dt.itemsize * n_dim)
 
-  return np.frombuffer(b, dtype=dt, count=chunk_size * n_dim).reshape((chunk_size, n_dim))
+  return cp.asarray(np.frombuffer(b, dtype=dt, count=chunk_size * n_dim).reshape((chunk_size, n_dim)))
 
 
 if __name__ == "__main__":
